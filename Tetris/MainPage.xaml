@@ -7,12 +7,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    Width="480"
-    Height="640"
-    MinWidth="480"
-    MinHeight="640" Loaded="GamePage_Loaded"
+    Width="640"
+    Height="853"
+    MinWidth="640"
+    MinHeight="853" 
+    Loaded="GamePage_Loaded"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml">
-
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
@@ -59,7 +60,7 @@
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
         </Grid>
-        <Grid Grid.Column="2" Grid.Row="0">
+        <Grid Grid.Column="2" Grid.Row="0" >
 
         </Grid>
     </Grid>
