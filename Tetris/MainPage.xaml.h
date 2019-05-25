@@ -17,13 +17,14 @@ namespace Tetris
 	public:
 		MainPage();
 
-		void startTimer();
-		void refreshFunc(Platform::Object^ sender, Platform::Object^ e);
-		
+		void gameLoop(Platform::Object^ sender, Platform::Object^ e);
 
 	private:
 		void GamePage_Loaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void OnTick(Object^ sender, Object^ e);
 		static Windows::UI::Xaml::Shapes::Rectangle^** FieldGrid;
+		void fixSize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e);
+		void keyPressed(Windows::UI::Core::CoreDispatcher^ sender, Windows::UI::Core::AcceleratorKeyEventArgs^ args);
+		
+
 	};
 }

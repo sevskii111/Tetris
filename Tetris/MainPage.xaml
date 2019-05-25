@@ -12,8 +12,8 @@
     MinWidth="640"
     MinHeight="853" 
     Loaded="GamePage_Loaded"
-    xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml">
-    
+    >
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
@@ -61,7 +61,33 @@
             </Grid.ColumnDefinitions>
         </Grid>
         <Grid Grid.Column="2" Grid.Row="0" >
-
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid Width="160" Height="160" VerticalAlignment="Top" HorizontalAlignment="Center" x:Name="Next" Margin="0,25,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                </Grid>
+                <TextBlock Text="Next" Margin="0,190,0,24" HorizontalAlignment="Center" FontSize="35"/>
+            </Grid>
+            <TextBox HorizontalAlignment="Center" Margin="0,156,0,0" Grid.Row="1" Text="SCORE:" VerticalAlignment="Top" Height="59" Width="213" FontSize="36" TextAlignment="Center" IsReadOnly="True" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}" SelectionHighlightColor="#053F3F3F" IsHitTestVisible="False" IsTabStop="False" IsTextPredictionEnabled="False"/>
+            <TextBox x:Name="Score" HorizontalAlignment="Center" Grid.Row="1" Text="" VerticalAlignment="Top" Height="59" Width="213" FontSize="36" TextAlignment="Center" Margin="0,214,0,0" IsReadOnly="True" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}" SelectionHighlightColor="#053F3F3F" IsHitTestVisible="False" IsTabStop="False" IsTextPredictionEnabled="False"/>
+            <TextBox x:Name="Level" HorizontalAlignment="Center" Grid.Row="1" Text="LEVEL:" VerticalAlignment="Top" Height="59" Width="213" FontSize="16" TextAlignment="Center" Margin="0,272,0,0" IsReadOnly="True" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}" SelectionHighlightColor="#053F3F3F" IsHitTestVisible="False" IsTabStop="False" IsTextPredictionEnabled="False"/>
         </Grid>
     </Grid>
 </Page>
