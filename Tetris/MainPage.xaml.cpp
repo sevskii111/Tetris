@@ -367,9 +367,9 @@ void checkLines() {
 			linesC++;
 		}
 	}
-	for (int i = 0; i < linesC; i++)
+	for (int i = linesC; i > 0; i--)
 	{
-		for (int j = lines[i] + i; j > 2; j--)
+		for (int j = lines[i - 1] + i; j > 2; j--)
 		{
 			for (int k = 0; k < 10; k++)
 			{
