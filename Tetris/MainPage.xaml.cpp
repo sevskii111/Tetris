@@ -606,13 +606,13 @@ void Tetris::MainPage::keyPressed(Windows::UI::Core::CoreDispatcher^ sender, Win
 		{
 			switch (key) {
 			case VirtualKey::Up:
-			case VirtualKey::Q:
+			case VirtualKey::E:
 				tryRotate(1);
 				break;
 			case VirtualKey::Right:
 				tryMove(1, 0);
 				break;
-			case VirtualKey::E:
+			case VirtualKey::Q:
 				tryRotate(3);
 				break;
 			case VirtualKey::Down:
