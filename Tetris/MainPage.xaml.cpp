@@ -339,7 +339,6 @@ const int scores[] = { 0, 40, 100, 300, 1200 };
 const int speeds[] = { 8000000,  7100000,  6300000,  5500000,  4700000,  3800000,  3000000,  2100000,  1300000,  1000000, 800000 };
 void checkLines() {
 
-	uint8 lines[4];
 	uint8 linesC = 0;
 
 
@@ -363,20 +362,16 @@ void checkLines() {
 			}
 		}
 		if (line) {
-			lines[linesC] = i;
 			linesC++;
-		}
-	}
-	for (int i = linesC; i > 0; i--)
-	{
-		for (int j = lines[i - 1] + i; j > 2; j--)
-		{
-			for (int k = 0; k < 10; k++)
+			for (int k = i; k >= 2; k--)
 			{
-				GameState::field[k][j] = GameState::field[k][j - 1];
+				for (int h = 0; h < 10; h++) {
+					GameState::field[h][k] = GameState::field[h][k - 1];
+				}
 			}
 		}
 	}
+	
 	GameState::lines += linesC;
 	GameState::score += scores[linesC] * (1 + GameState::level);
 
