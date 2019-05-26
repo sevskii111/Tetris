@@ -31,6 +31,7 @@ using namespace Windows::UI::Core;
 void lock();
 void gameover();
 void startTimer();
+void gameLoopF();
 static bool tryInject(uint8** field, int x, int y, int tetroInd, uint8 rotation, uint8** result, int8 forced_color = -1);
 
 struct Tetrimino
@@ -221,7 +222,10 @@ static void initGame() {
 				NextGrid[i][j] = rect;
 			}
 		}
-
+	}
+	else {
+		delete[] GameState::currBag;
+		delete[] GameState::nextBag;
 	}
 	for (int i = 0; i < 10; i++)
 	{
@@ -271,34 +275,13 @@ static void initGame() {
 
 static void DrawField(uint8** field)
 {
-	uint8** f = new uint8 * [10];
-	int o = 4;
-	while (tryInject(field, GameState::tetrX, GameState::tetrY + o, GameState::curTetr, GameState::tetrRot, f)) {
-		for (int i = 0; i < 10; i++)
-		{
-			delete[] f[i];
-		}
-		o++;
-	}
-	if (o > 4) {
-		tryInject(field, GameState::tetrX, GameState::tetrY + o - 1, GameState::curTetr, GameState::tetrRot, f, 1);
-	}
 	for (int i = 0; i < 10; i++)
 	{
 		for (int j = 2; j < 22; j++)
 		{
-			if (o > 4) {
-				FieldGrid[i][j - 2]->Fill = colors[f[i][j]];
-			}
-			else {
-				FieldGrid[i][j - 2]->Fill = colors[field[i][j]];
-			}
-		}
-		if (o > 4) {
-			delete[] f[i];
+			FieldGrid[i][j - 2]->Fill = colors[field[i][j]];
 		}
 	}
-	delete[] f;
 }
 
 static bool tryInject(uint8** field, int x, int y, int tetroInd, uint8 rotation, uint8** result, int8 forced_color)
@@ -323,6 +306,13 @@ static bool tryInject(uint8** field, int x, int y, int tetroInd, uint8 rotation,
 			{
 				checked++;
 				if (result[i][j] != 0) {
+					for (int k = i; k >= 0; k--) {
+						delete[] result[k];
+					}
+					for (int k = 0; k < 4; k++) {
+						delete[] tetr[k];
+					}
+					delete[] tetr;
 					return false;
 				}
 				result[i][j] = color;
@@ -330,8 +320,47 @@ static bool tryInject(uint8** field, int x, int y, int tetroInd, uint8 rotation,
 		}
 	}
 	if (checked < 4) {
+		for (int k = 9; k >= 0; k--) {
+			delete[] result[k];
+		}
+		for (int k = 0; k < 4; k++) {
+			delete[] tetr[k];
+		}
+		delete[] tetr;
 		return false;
 	}
+
+	if (forced_color == -1) {
+		uint8** f = new uint8 * [10];
+		int o = 0;
+		while (tryInject(field, x, y + o, GameState::curTetr, rotation, f, 1)) {
+			for (int i = 0; i < 10; i++)
+			{
+				delete[] f[i];
+			}
+			o++;
+		}
+		if (o > 0) {
+			tryInject(field, x, y + o - 1, GameState::curTetr, rotation, f, 1);
+			for (int i = 0; i < 10; i++)
+			{
+				for (int j = 0; j < 22; j++)
+				{
+					if (!result[i][j]) {
+						result[i][j] = f[i][j];
+					}
+				}
+				delete[] f[i];
+			}
+			delete[] f;
+		}
+		
+	}
+	for (int k = 0; k < 4; k++) {
+		delete[] tetr[k];
+	}
+	delete[] tetr;
+
 	return true;
 }
 
@@ -428,8 +457,14 @@ void lock()
 				NextGrid[j][i]->Fill = colors[0];
 			}
 		}
+		delete[] nextTetrF[i - 1];
 	}
+	delete[] nextTetrF[3];
+	delete[] nextTetrF;
 	checkLines();
+	refreshTimer->Stop();
+	gameLoopF();
+	startTimer();
 }
 
 
@@ -496,6 +531,10 @@ void gameover()
 static int a = 0;
 void MainPage::gameLoop(Platform::Object^ sender, Platform::Object^ e)
 {
+	gameLoopF();
+}
+
+void gameLoopF() {
 	uint8** f = new uint8 * [10];
 	if (tryInject(GameState::field, GameState::tetrX, GameState::tetrY + 1, GameState::curTetr, GameState::tetrRot, f))
 	{
@@ -506,6 +545,7 @@ void MainPage::gameLoop(Platform::Object^ sender, Platform::Object^ e)
 			{
 				GameState::injField[i][j] = f[i][j];
 			}
+			delete[] f[i];
 		}
 		DrawField(GameState::injField);
 	}
@@ -515,13 +555,13 @@ void MainPage::gameLoop(Platform::Object^ sender, Platform::Object^ e)
 	else {
 		lock();
 	}
-
+	delete[] f;
 }
 
 bool tryMove(int8 xo, int8 yo) {
 	if (!GameState::paused) {
 		uint8** f = new uint8 * [10];
-		if (tryInject(GameState::field, GameState::tetrX + xo, GameState::tetrY, GameState::curTetr, GameState::tetrRot, f))
+		if (tryInject(GameState::field, GameState::tetrX + xo, GameState::tetrY + yo, GameState::curTetr, GameState::tetrRot, f))
 		{
 			for (int i = 0; i < 10; i++)
 			{
@@ -529,12 +569,15 @@ bool tryMove(int8 xo, int8 yo) {
 				{
 					GameState::injField[i][j] = f[i][j];
 				}
+				delete[] f[i];
 			}
 			GameState::tetrX += xo;
 			GameState::tetrY += yo;
 			DrawField(GameState::injField);
+			delete[] f;
 			return true;
 		}
+		delete[] f;
 		return false;
 	}
 	else {
@@ -575,13 +618,16 @@ bool tryRotate(uint8 r) {
 				{
 					GameState::injField[i][j] = f[i][j];
 				}
+				delete[] f[i];
 			}
+			delete[] f;
 			GameState::tetrRot = rr;
 			GameState::tetrX += xo;
 			DrawField(GameState::injField);
 			return true;
 		}
 		else {
+			delete[] f;
 			return false;
 		}
 	}
@@ -597,6 +643,7 @@ void Tetris::MainPage::keyPressed(Windows::UI::Core::CoreDispatcher^ sender, Win
 	CoreAcceleratorKeyEventType type = args->EventType;
 	VirtualKey key = args->VirtualKey;
 	if (GameState::active) {
+		bool t = false;
 		if (type == CoreAcceleratorKeyEventType::KeyDown)
 		{
 			switch (key) {
@@ -611,8 +658,13 @@ void Tetris::MainPage::keyPressed(Windows::UI::Core::CoreDispatcher^ sender, Win
 				tryRotate(3);
 				break;
 			case VirtualKey::Down:
-				while (tryMove(0, 1));
-				lock();
+				while (tryMove(0, 1)) {
+					t = true;
+				}
+				if (t) {
+					refreshTimer->Stop();
+					startTimer();
+				}
 				break;
 			case VirtualKey::Left:
 				tryMove(-1, 0);
